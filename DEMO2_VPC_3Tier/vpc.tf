@@ -10,7 +10,7 @@ resource "aws_subnet" "subnets" {
   vpc_id   = aws_vpc.ThreetierVPC.id
   for_each = {public_subnet_for_myvpc:"10.0.3.0/24", private_subnet_for_myvpc:"10.0.4.0/24"}
   cidr_block = each.value
-
+  availability_zone = "us-east-1a"
   tags = {
     Name = each.key
   }
