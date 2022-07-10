@@ -1,0 +1,54 @@
+- name: Terraform ansible integration
+  hosts: all
+  become: true
+  become_method: sudo
+  tasks:
+    - name: update apt package
+      apt:
+          update_cache: true
+          cache_valid_time: 3600
+          force_apt_get: true
+    - name: Install packages
+      apt: 
+          name: "{{ item }}"
+          state: present
+      with_items:
+              - apache2
+              - python3-pip
+              - libapache2-mod-wsgi-py3
+              - python3-venv
+              - mysql-server
+              - libmysqlclient-dev
+    - name: Create web directory
+      file:
+        path: /var/www/html/web
+        state: directory
+    - name: copy app.wsgi
+      copy:
+        src: app.wsgi
+        dest: /var/www/html/web/app.wsgi
+        owner: root
+        group: root
+        mode: 0644
+    - name: copy application
+      copy:
+        src: flask/
+        dest: /var/www/html/web
+        owner: root
+        group: root
+        mode: 0644
+    - name: copy apache config
+      copy:
+        src: /etc/apache2/sites-available/000-default.conf
+        dest: /etc/apache2/sites-available/000-default.conf
+        owner: root
+        group: root
+        mode: 0644
+    - name: pip package installation
+      pip:
+         name:
+            - flask
+            - flask_mysqldb
+       
+        
+
